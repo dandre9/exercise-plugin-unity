@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
 // using System.IO;
@@ -16,6 +17,11 @@ public class BackgroundService : MonoBehaviour
     [SerializeField] LineRenderer route;
     [SerializeField] CanvasGroup canvasGroup;
 
+#if UNITY_IOS
+    [DllImport("__Internal")]
+    private static extern void _ShowAlert(string title, string message);
+
+#elif UNITY_ANDROID
     private AndroidJavaClass unityClass;
     private AndroidJavaObject unityActivity;
     private AndroidJavaClass customClass;
@@ -28,6 +34,7 @@ public class BackgroundService : MonoBehaviour
     private const string CustomClassGetDataMethod = "GetData";
     private const string CustomClassGetServiceStateMethod = "GetServiceState";
     private const string CustomClassGetRouteCoordsMethod = "GetRouteCoords";
+#endif
 
     int numOfDirections = 0;
 
@@ -132,7 +139,11 @@ public class BackgroundService : MonoBehaviour
 
     private void Start()
     {
+#if UNITY_IOS
+
+#elif UNITY_ANDROID
         SendActivityReference(PackageName);
+#endif
     }
 
     private void DrawRoute(List<Vector3> convertedCoords)
@@ -150,48 +161,59 @@ public class BackgroundService : MonoBehaviour
 
     private void SendActivityReference(string packageName)
     {
+#if UNITY_IOS
+
+#elif UNITY_ANDROID
         unityClass = new AndroidJavaClass(UnityDefaultJavaClassName);
         unityActivity = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
         customClass = new AndroidJavaClass(packageName);
         customClass.CallStatic(CustomClassReceiveActivityInstanceMethod, unityActivity);
-
-        if (customClass.CallStatic<bool>(CustomClassGetServiceStateMethod))
-        {
-            serviceRunning.text = "Ligado";
-            serviceRunning.color = Color.green;
-            InvokeRepeating("SyncData", 1, 5);
-        }
-
+#endif
     }
 
     public void StartService()
     {
+#if UNITY_IOS
+        _ShowAlert("O JOGO", "Perdi e você também");
+#elif UNITY_ANDROID
         serviceRunning.text = "Ligado";
         serviceRunning.color = Color.green;
         customClass.CallStatic(CustomClassStartServiceMethod);
         InvokeRepeating("SyncData", 1, 5);
+#endif
     }
 
     public void StopService()
     {
+#if UNITY_IOS
+
+#elif UNITY_ANDROID
         serviceRunning.text = "Desligado";
         serviceRunning.color = Color.red;
         customClass.CallStatic(CustomClassStopServiceMethod);
         CancelInvoke();
+#endif
     }
 
     public void SyncData()
     {
+#if UNITY_IOS
+
+#elif UNITY_ANDROID
         double[] data = customClass.CallStatic<double[]>(CustomClassGetDataMethod);
 
         steps.text = data[4].ToString("N0");
         distance.text = data[3] + " m";
         coords.text = data[0] + " , " + data[1];
         altitude.text = data[2].ToString("N2") + " (altitude)";
+#endif
     }
 
     public void GetRouteCoords()
     {
+#if UNITY_IOS
+
+#elif UNITY_ANDROID
         canvasGroup.alpha = 0;
         string[] coordsString = customClass.CallStatic<string[]>(CustomClassGetRouteCoordsMethod);
         numOfDirections = coordsString.Length;
@@ -215,6 +237,7 @@ public class BackgroundService : MonoBehaviour
         }
 
         DrawRoute(convertedCoords);
+#endif
     }
 
     public void ChangeRouteTransform(string symbol)
