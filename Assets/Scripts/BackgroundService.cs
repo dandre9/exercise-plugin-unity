@@ -17,9 +17,14 @@ public class BackgroundService : MonoBehaviour
     [SerializeField] LineRenderer route;
     [SerializeField] CanvasGroup canvasGroup;
 
+    public int a = 43, b = 26;
+
 #if UNITY_IOS
     [DllImport("__Internal")]
     private static extern void _ShowAlert(string title, string message);
+
+    [DllImport("__Internal")]
+    private static extern int _addTwoNumberInIOS(int a, int b);
 
 #elif UNITY_ANDROID
     private AndroidJavaClass unityClass;
@@ -174,7 +179,8 @@ public class BackgroundService : MonoBehaviour
     public void StartService()
     {
 #if UNITY_IOS
-        _ShowAlert("O JOGO", "Perdi e você também");
+        int result = _addTwoNumberInIOS(a, b);
+        _ShowAlert("O JOGO", result.ToString());
 #elif UNITY_ANDROID
         serviceRunning.text = "Ligado";
         serviceRunning.color = Color.green;
