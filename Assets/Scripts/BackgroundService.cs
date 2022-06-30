@@ -24,7 +24,7 @@ public class BackgroundService : MonoBehaviour
     private static extern void _ShowAlert(string title, string message);
 
     [DllImport("__Internal")]
-    private static extern int _addTwoNumberInIOS(int a, int b);
+    private static extern void _addTwoNumberInIOS(int a, int b);
 
 #elif UNITY_ANDROID
     private AndroidJavaClass unityClass;
@@ -179,8 +179,8 @@ public class BackgroundService : MonoBehaviour
     public void StartService()
     {
 #if UNITY_IOS
-        int result = _addTwoNumberInIOS(a, b);
-        _ShowAlert("O JOGO", result.ToString());
+        _addTwoNumberInIOS(a, b);
+        // _ShowAlert("O JOGO", result.ToString());
 #elif UNITY_ANDROID
         serviceRunning.text = "Ligado";
         serviceRunning.color = Color.green;

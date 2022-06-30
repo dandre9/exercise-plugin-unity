@@ -27,14 +27,18 @@ protocol LocationServiceDelegate: class {
     }
     
     init(locationManager: CLLocationManager = CLLocationManager()) {
+        print("INITIALIZED")
         super.init()
         self.locationManager = locationManager
         self.locationManager.delegate = self
         self.locationManager.pausesLocationUpdatesAutomatically = false
         self.locationManager.allowsBackgroundLocationUpdates = true
+        self.locationManager.activityType = .fitness
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
     }
     
     @objc public func requestAuthorization() {
+        locationManager.requestWhenInUseAuthorization()
         locationManager.requestAlwaysAuthorization()
     }
     
@@ -51,7 +55,7 @@ protocol LocationServiceDelegate: class {
 extension LocationService: CLLocationManagerDelegate {
     public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         let authorizationStatus: CLAuthorizationStatus
-
+        
         if #available(iOS 14, *) {
             authorizationStatus = manager.authorizationStatus
         } else {
@@ -71,6 +75,10 @@ extension LocationService: CLLocationManagerDelegate {
             delegate?.authorizationRestricted()
         case .authorizedWhenInUse:
             print("authorizedWhenInUse")
+            DispatchQueue.main.async{
+                self.locationManager.requestAlwaysAuthorization()
+                self.locationManagerDidChangeAuthorization(manager)
+            }
             //didAuthorized
             delegate?.didAuthorize()
         case .authorizedAlways:
