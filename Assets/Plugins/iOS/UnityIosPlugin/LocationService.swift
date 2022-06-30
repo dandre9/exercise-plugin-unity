@@ -30,6 +30,8 @@ protocol LocationServiceDelegate: class {
         super.init()
         self.locationManager = locationManager
         self.locationManager.delegate = self
+        self.locationManager.pausesLocationUpdatesAutomatically = false
+        self.locationManager.allowsBackgroundLocationUpdates = true
     }
     
     @objc public func requestAuthorization() {
@@ -37,6 +39,7 @@ protocol LocationServiceDelegate: class {
     }
     
     @objc public func start() {
+        print("Start Location")
         locationManager.startUpdatingLocation()
     }
     
@@ -82,6 +85,6 @@ extension LocationService: CLLocationManagerDelegate {
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print(locations)
+        print("Updating location: ", locations)
     }
 }

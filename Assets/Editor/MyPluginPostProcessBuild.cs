@@ -24,9 +24,9 @@ public class MyPluginPostProcessBuild
             rootDict.SetString("NSLocationAlwaysAndWhenInUseUsageDescription", "Uses background location");
 
             // background modes
-            PlistElementArray bgModes = rootDict.CreateArray("UIBackgroundModes");
-            bgModes.AddString("location");
-            bgModes.AddString("fetch");
+            // var buildKey = "UIBackgroundModes";
+            // rootDict.CreateArray(buildKey).AddString("location");
+            // rootDict.CreateArray(buildKey).AddString("fetch");
 
             // Write to file
             File.WriteAllText(plistPath, plist.WriteToString());
@@ -53,7 +53,8 @@ public class MyPluginPostProcessBuild
 
             proj.SetBuildProperty(targetGuid, "SWIFT_OBJC_INTERFACE_HEADER_NAME", "UnityIosPlugin-Swift.h");
 
-
+            // string guid = proj.GetUnityMainTargetGuid();
+            // proj.AddCapability(guid, PBXCapabilityType.BackgroundModes);
 
             proj.AddBuildProperty(targetGuid, "LD_RUNPATH_SEARCH_PATHS", "@executable_path/Frameworks $(PROJECT_DIR)/lib/$(CONFIGURATION) $(inherited)");
             proj.AddBuildProperty(targetGuid, "FRAMERWORK_SEARCH_PATHS",
@@ -66,9 +67,10 @@ public class MyPluginPostProcessBuild
             proj.AddBuildProperty(targetGuid, "SWIFT_VERSION", "5.0");
             proj.AddBuildProperty(targetGuid, "COREML_CODEGEN_LANGUAGE", "Swift");
 
-
-
             proj.WriteToFile(projPath);
+
+            // var projCapability = new ProjectCapabilityManager(projPath, "Unity-iPhone/mmk.entitlements", null, proj.GetUnityMainTargetGuid());
+            // projCapability.AddBackgroundModes(BackgroundModesOptions.LocationUpdates);
         }
     }
 }
