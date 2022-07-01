@@ -8,7 +8,7 @@
 import CoreLocation
 import Foundation
 
-protocol LocationServiceDelegate: class {
+protocol LocationServiceDelegate: AnyObject {
     func authorizationRestricted()
     func authorizationUknown()
     func promptAuthorizationAction()
@@ -21,6 +21,8 @@ protocol LocationServiceDelegate: class {
     weak var delegate: LocationServiceDelegate?
     
     private var locationManager: CLLocationManager!
+
+    private var lat: Double = 0, lon: Double = 0
     
     var enabled: Bool {
         return CLLocationManager.locationServicesEnabled()
@@ -49,6 +51,10 @@ protocol LocationServiceDelegate: class {
     
     @objc public func stop() {
         locationManager.stopUpdatingLocation()
+    }
+
+    @objc func getData() -> Array<Double> {
+        return [lat, lon, 0, 0, 0]
     }
 }
 
@@ -94,5 +100,7 @@ extension LocationService: CLLocationManagerDelegate {
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         print("Updating location: ", locations)
+        lat = Double(manager.location?.coordinate.latitude ?? 0)
+        lon = Double(manager.location?.coordinate.longitude ?? 0)
     }
 }

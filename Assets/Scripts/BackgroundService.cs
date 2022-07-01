@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using TMPro;
 using UnityEngine;
-// using System.IO;
+using Newtonsoft.Json.Linq;
 
 public class BackgroundService : MonoBehaviour
 {
@@ -21,7 +21,7 @@ public class BackgroundService : MonoBehaviour
 
 #if UNITY_IOS
     [DllImport("__Internal")]
-    private static extern void _ShowAlert(string title, string message);
+    private static extern string _getData();
 
     [DllImport("__Internal")]
     private static extern void _addTwoNumberInIOS(int a, int b);
@@ -178,15 +178,15 @@ public class BackgroundService : MonoBehaviour
 
     public void StartService()
     {
-#if UNITY_IOS
-        _addTwoNumberInIOS(a, b);
-        // _ShowAlert("O JOGO", result.ToString());
-#elif UNITY_ANDROID
         serviceRunning.text = "Ligado";
         serviceRunning.color = Color.green;
-        customClass.CallStatic(CustomClassStartServiceMethod);
-        InvokeRepeating("SyncData", 1, 5);
+
+#if UNITY_IOS
+        _addTwoNumberInIOS(a, b);
+#elif UNITY_ANDROID        
+        customClass.CallStatic(CustomClassStartServiceMethod);        
 #endif
+        InvokeRepeating("SyncData", 1, 5);
     }
 
     public void StopService()
@@ -204,15 +204,25 @@ public class BackgroundService : MonoBehaviour
     public void SyncData()
     {
 #if UNITY_IOS
+        string strData = _getData();
+        JArray json = JArray.Parse(strData);
+        double[] data = new double[5];
+        int i = 0;
+
+        foreach (double item in json)
+        {
+            data[i++] = item;
+        }
 
 #elif UNITY_ANDROID
-        double[] data = customClass.CallStatic<double[]>(CustomClassGetDataMethod);
+        double[] data = customClass.CallStatic<double[]>(CustomClassGetDataMethod);        
+#endif
 
+        // Debug.Log("ALOHOMOHA: " + data);
         steps.text = data[4].ToString("N0");
         distance.text = data[3] + " m";
         coords.text = data[0] + " , " + data[1];
         altitude.text = data[2].ToString("N2") + " (altitude)";
-#endif
     }
 
     public void GetRouteCoords()
