@@ -22,6 +22,7 @@ public class MyPluginPostProcessBuild
 
             // background location useage key (new in iOS 8)
             rootDict.SetString("NSLocationAlwaysAndWhenInUseUsageDescription", "Uses background location");
+            rootDict.SetString("NSMotionUsageDescription", "Uses background step counting");
 
             // background modes
             // var buildKey = "UIBackgroundModes";

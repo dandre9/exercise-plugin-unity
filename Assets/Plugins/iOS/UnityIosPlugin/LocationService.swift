@@ -6,6 +6,7 @@
 //
 
 import CoreLocation
+import CoreMotion
 import Foundation
 
 protocol LocationServiceDelegate: AnyObject {
@@ -22,7 +23,9 @@ protocol LocationServiceDelegate: AnyObject {
     
     private var locationManager: CLLocationManager!
 
-    private var lat: Double = 0, lon: Double = 0, alt: Double = 0, distance: Double = 0
+    private let pedometer = CMPedometer()
+
+    private var lat: Double = 0, lon: Double = 0, alt: Double = 0, distance: Double = 0, steps: Int = 0
     
     private var directions: Array<String> = Array()
     
@@ -41,6 +44,18 @@ protocol LocationServiceDelegate: AnyObject {
         self.locationManager.activityType = .fitness
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
     }
+
+    private func startCountingSteps() {
+        pedometer.startUpdates(from: Date()) {
+            [weak self] pedometerData, error in
+            guard let pedometerData = pedometerData, error == nil else { return }
+
+            DispatchQueue.main.async {
+                print(pedometerData.numberOfSteps.stringValue)
+                self?.steps = Int(truncating: pedometerData.numberOfSteps)
+            }
+        }
+    }
     
     @objc public func requestAuthorization() {
         locationManager.requestWhenInUseAuthorization()
@@ -49,19 +64,27 @@ protocol LocationServiceDelegate: AnyObject {
     
     @objc public func start() {
         locationManager.startUpdatingLocation()
+        startUpdating()
     }
     
     @objc public func stop() {
         locationManager.stopUpdatingLocation()
+        pedometer.stopUpdates()
     }
 
     @objc func getData() -> Array<Double> {
-        return [lat, lon, alt, distance, 0]
+        return [lat, lon, alt, distance, Double(steps)]
     }
     
     @objc func getRouteCoords() -> Array<String> {
             return directions
+    }
+
+    private func startUpdating() {
+        if CMPedometer.isStepCountingAvailable() {
+            startCountingSteps()
         }
+    }
 }
 
 extension LocationService: CLLocationManagerDelegate {
