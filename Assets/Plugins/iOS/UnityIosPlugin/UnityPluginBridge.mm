@@ -19,16 +19,22 @@ extern "C" {
     
 #pragma mark - Functions
     
-    void _addTwoNumberInIOS(int a , int b) {
-       
-        // int result = [[UnityPlugin shared] AddTwoNumberWithA:(a) b:(b)];
+    void _startService() {
         [[LocationService shared] requestAuthorization];
         [[LocationService shared] start];
-        // return result;
     }
 
     char* _getData() {
         NSArray *temp = [[LocationService shared] getData];
+        NSError* error = nil;
+        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:temp options:NSJSONWritingPrettyPrinted error:&error];
+        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        
+        return convertNSStringToCString(jsonString);
+    }
+
+    char* _getRouteCoords() {
+        NSString *temp = [[LocationService shared] getRouteCoords];
         NSError* error = nil;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:temp options:NSJSONWritingPrettyPrinted error:&error];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];

@@ -22,7 +22,11 @@ protocol LocationServiceDelegate: AnyObject {
     
     private var locationManager: CLLocationManager!
 
-    private var lat: Double = 0, lon: Double = 0
+    private var lat: Double = 0, lon: Double = 0, alt: Double = 0, distance: Double = 0
+    
+    private var directions: Array<String> = Array()
+    
+    private var prevCoords: CLLocation = CLLocation()
     
     var enabled: Bool {
         return CLLocationManager.locationServicesEnabled()
@@ -54,8 +58,12 @@ protocol LocationServiceDelegate: AnyObject {
     }
 
     @objc func getData() -> Array<Double> {
-        return [lat, lon, 0, 0, 0]
+        return [lat, lon, alt, 0, 0]
     }
+    
+    @objc func getRouteCoords() -> Array<String> {
+            return directions
+        }
 }
 
 extension LocationService: CLLocationManagerDelegate {
@@ -99,8 +107,22 @@ extension LocationService: CLLocationManagerDelegate {
     }
     
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        var tempDistance: Double = 0;
+        
+        if(lat != 0) {
+            tempDistance = prevCoords.distance(from: manager.location ?? prevCoords)
+        }
+        
+        if(lat == 0 || distance >= 5) {
+            distance += tempDistance
+            prevCoords = manager.location ?? prevCoords
+            lat = Double(manager.location?.coordinate.latitude ?? 0)
+            lon = Double(manager.location?.coordinate.longitude ?? 0)
+            alt = Double(manager.location?.altitude ?? 0)
+            
+            directions.append("\(alt);\(lon);\(alt)")
+        }
+        
         print("Updating location: ", locations)
-        lat = Double(manager.location?.coordinate.latitude ?? 0)
-        lon = Double(manager.location?.coordinate.longitude ?? 0)
     }
 }

@@ -24,7 +24,10 @@ public class BackgroundService : MonoBehaviour
     private static extern string _getData();
 
     [DllImport("__Internal")]
-    private static extern void _addTwoNumberInIOS(int a, int b);
+    private static extern void _startService();
+
+    [DllImport("__Internal")]
+    private static extern void _getRouteCoords();
 
 #elif UNITY_ANDROID
     private AndroidJavaClass unityClass;
@@ -181,9 +184,9 @@ public class BackgroundService : MonoBehaviour
         serviceRunning.text = "Ligado";
         serviceRunning.color = Color.green;
 
-#if UNITY_IOS
-        _addTwoNumberInIOS(a, b);
-#elif UNITY_ANDROID        
+#if UNITY_IOS && !UNITY_EDITOR
+        _startService();
+#elif UNITY_ANDROID && !UNITY_EDITOR        
         customClass.CallStatic(CustomClassStartServiceMethod);        
 #endif
         InvokeRepeating("SyncData", 1, 5);
@@ -203,10 +206,12 @@ public class BackgroundService : MonoBehaviour
 
     public void SyncData()
     {
-#if UNITY_IOS
+        double[] data = { -19.957685715563155, -43.941012059756069, 0, 0, 0 };
+
+#if UNITY_IOS && !UNITY_EDITOR
         string strData = _getData();
         JArray json = JArray.Parse(strData);
-        double[] data = new double[5];
+        data = new double[json.Count];
         int i = 0;
 
         foreach (double item in json)
@@ -214,11 +219,10 @@ public class BackgroundService : MonoBehaviour
             data[i++] = item;
         }
 
-#elif UNITY_ANDROID
-        double[] data = customClass.CallStatic<double[]>(CustomClassGetDataMethod);        
+#elif UNITY_ANDROID && !UNITY_EDITOR
+        data = customClass.CallStatic<double[]>(CustomClassGetDataMethod);        
 #endif
 
-        // Debug.Log("ALOHOMOHA: " + data);
         steps.text = data[4].ToString("N0");
         distance.text = data[3] + " m";
         coords.text = data[0] + " , " + data[1];
@@ -227,12 +231,25 @@ public class BackgroundService : MonoBehaviour
 
     public void GetRouteCoords()
     {
-#if UNITY_IOS
-
-#elif UNITY_ANDROID
         canvasGroup.alpha = 0;
-        string[] coordsString = customClass.CallStatic<string[]>(CustomClassGetRouteCoordsMethod);
+        string[] coordsString;
+
+#if UNITY_IOS
+        string strData = _getData();
+        JArray json = JArray.Parse(strData);
+        coordsString = new string[json.Count];
+        int index = 0;
+
+        foreach (string item in json)
+        {
+            coordsString[index++] = item;
+        }
+
         numOfDirections = coordsString.Length;
+#elif UNITY_ANDROID
+        coordsString = customClass.CallStatic<string[]>(CustomClassGetRouteCoordsMethod);
+        numOfDirections = coordsString.Length;
+#endif        
 
         float[,] coordsArray = new float[numOfDirections, 3];
         List<Vector3> convertedCoords = new List<Vector3>();
@@ -253,7 +270,7 @@ public class BackgroundService : MonoBehaviour
         }
 
         DrawRoute(convertedCoords);
-#endif
+
     }
 
     public void ChangeRouteTransform(string symbol)
