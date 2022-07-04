@@ -27,7 +27,10 @@ public class BackgroundService : MonoBehaviour
     private static extern void _startService();
 
     [DllImport("__Internal")]
-    private static extern void _getRouteCoords();
+    private static extern void _stopService();
+
+    [DllImport("__Internal")]
+    private static extern string _getRouteCoords();
 
 #elif UNITY_ANDROID
     private AndroidJavaClass unityClass;
@@ -147,9 +150,7 @@ public class BackgroundService : MonoBehaviour
 
     private void Start()
     {
-#if UNITY_IOS
-
-#elif UNITY_ANDROID
+#if UNITY_ANDROID
         SendActivityReference(PackageName);
 #endif
     }
@@ -169,9 +170,7 @@ public class BackgroundService : MonoBehaviour
 
     private void SendActivityReference(string packageName)
     {
-#if UNITY_IOS
-
-#elif UNITY_ANDROID
+#if UNITY_ANDROID
         unityClass = new AndroidJavaClass(UnityDefaultJavaClassName);
         unityActivity = unityClass.GetStatic<AndroidJavaObject>("currentActivity");
         customClass = new AndroidJavaClass(packageName);
@@ -194,14 +193,14 @@ public class BackgroundService : MonoBehaviour
 
     public void StopService()
     {
-#if UNITY_IOS
-
-#elif UNITY_ANDROID
         serviceRunning.text = "Desligado";
         serviceRunning.color = Color.red;
-        customClass.CallStatic(CustomClassStopServiceMethod);
-        CancelInvoke();
+#if UNITY_IOS
+        _stopService();
+#elif UNITY_ANDROID
+        customClass.CallStatic(CustomClassStopServiceMethod);        
 #endif
+        CancelInvoke();
     }
 
     public void SyncData()
@@ -224,8 +223,8 @@ public class BackgroundService : MonoBehaviour
 #endif
 
         steps.text = data[4].ToString("N0");
-        distance.text = data[3] + " m";
-        coords.text = data[0] + " , " + data[1];
+        distance.text = data[3].ToString("N2") + " m";
+        coords.text = data[0].ToString("N7") + " , " + data[1].ToString("N7");
         altitude.text = data[2].ToString("N2") + " (altitude)";
     }
 
@@ -235,7 +234,7 @@ public class BackgroundService : MonoBehaviour
         string[] coordsString;
 
 #if UNITY_IOS
-        string strData = _getData();
+        string strData = _getRouteCoords();
         JArray json = JArray.Parse(strData);
         coordsString = new string[json.Count];
         int index = 0;

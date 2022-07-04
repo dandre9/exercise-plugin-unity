@@ -33,7 +33,6 @@ protocol LocationServiceDelegate: AnyObject {
     }
     
     init(locationManager: CLLocationManager = CLLocationManager()) {
-        print("INITIALIZED")
         super.init()
         self.locationManager = locationManager
         self.locationManager.delegate = self
@@ -49,7 +48,6 @@ protocol LocationServiceDelegate: AnyObject {
     }
     
     @objc public func start() {
-        print("Start Location")
         locationManager.startUpdatingLocation()
     }
     
@@ -58,7 +56,7 @@ protocol LocationServiceDelegate: AnyObject {
     }
 
     @objc func getData() -> Array<Double> {
-        return [lat, lon, alt, 0, 0]
+        return [lat, lon, alt, distance, 0]
     }
     
     @objc func getRouteCoords() -> Array<String> {
@@ -113,14 +111,16 @@ extension LocationService: CLLocationManagerDelegate {
             tempDistance = prevCoords.distance(from: manager.location ?? prevCoords)
         }
         
-        if(lat == 0 || distance >= 5) {
+        print("Distancia: \(tempDistance)")
+        
+        if(lat == 0 || tempDistance >= 5) {
             distance += tempDistance
             prevCoords = manager.location ?? prevCoords
             lat = Double(manager.location?.coordinate.latitude ?? 0)
             lon = Double(manager.location?.coordinate.longitude ?? 0)
             alt = Double(manager.location?.altitude ?? 0)
             
-            directions.append("\(alt);\(lon);\(alt)")
+            directions.append("\(lat);\(lon);\(alt)")
         }
         
         print("Updating location: ", locations)

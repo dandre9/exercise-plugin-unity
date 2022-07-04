@@ -24,6 +24,10 @@ extern "C" {
         [[LocationService shared] start];
     }
 
+    void _stopService() {
+        [[LocationService shared] stop];
+    }
+
     char* _getData() {
         NSArray *temp = [[LocationService shared] getData];
         NSError* error = nil;
@@ -34,7 +38,7 @@ extern "C" {
     }
 
     char* _getRouteCoords() {
-        NSString *temp = [[LocationService shared] getRouteCoords];
+        NSArray *temp = [[LocationService shared] getRouteCoords];
         NSError* error = nil;
         NSData *jsonData = [NSJSONSerialization dataWithJSONObject:temp options:NSJSONWritingPrettyPrinted error:&error];
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
