@@ -15,19 +15,15 @@ public class MyPluginPostProcessBuild
             // Get plist
             string plistPath = pathToBuiltProject + "/Info.plist";
             PlistDocument plist = new PlistDocument();
+
             plist.ReadFromString(File.ReadAllText(plistPath));
 
             // Get root
             PlistElementDict rootDict = plist.root;
 
             // background location useage key (new in iOS 8)
-            rootDict.SetString("NSLocationAlwaysAndWhenInUseUsageDescription", "Uses background location");
-            rootDict.SetString("NSMotionUsageDescription", "Uses background step counting");
-
-            // background modes
-            // var buildKey = "UIBackgroundModes";
-            // rootDict.CreateArray(buildKey).AddString("location");
-            // rootDict.CreateArray(buildKey).AddString("fetch");
+            rootDict.SetString("NSLocationAlwaysAndWhenInUseUsageDescription", "Para registro da sua atividade física");
+            rootDict.SetString("NSMotionUsageDescription", "Habilite para contar a quantidade de passos dado durante a atividade física");
 
             // Write to file
             File.WriteAllText(plistPath, plist.WriteToString());
@@ -45,18 +41,9 @@ public class MyPluginPostProcessBuild
 
             var targetGuid = proj.TargetGuidByName(PBXProject.GetUnityTestTargetName());
 
-
             proj.SetBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");
-
-
-
             proj.SetBuildProperty(targetGuid, "SWIFT_OBJC_BRIDGING_HEADER", "Libraries/Plugins/iOS/UnityIosPlugin/Source/UnityPlugin-Bridging-Header.h");
-
             proj.SetBuildProperty(targetGuid, "SWIFT_OBJC_INTERFACE_HEADER_NAME", "UnityIosPlugin-Swift.h");
-
-            // string guid = proj.GetUnityMainTargetGuid();
-            // proj.AddCapability(guid, PBXCapabilityType.BackgroundModes);
-
             proj.AddBuildProperty(targetGuid, "LD_RUNPATH_SEARCH_PATHS", "@executable_path/Frameworks $(PROJECT_DIR)/lib/$(CONFIGURATION) $(inherited)");
             proj.AddBuildProperty(targetGuid, "FRAMERWORK_SEARCH_PATHS",
                 "$(inherited) $(PROJECT_DIR) $(PROJECT_DIR)/Frameworks");
@@ -70,8 +57,9 @@ public class MyPluginPostProcessBuild
 
             proj.WriteToFile(projPath);
 
-            // var projCapability = new ProjectCapabilityManager(projPath, "Unity-iPhone/mmk.entitlements", null, proj.GetUnityMainTargetGuid());
-            // projCapability.AddBackgroundModes(BackgroundModesOptions.LocationUpdates);
+            ProjectCapabilityManager projCapability = new ProjectCapabilityManager(projPath, "RadarStudio.entitlements", "Unity-iPhone");
+            projCapability.AddBackgroundModes(BackgroundModesOptions.LocationUpdates);
+            projCapability.WriteToFile();
         }
     }
 }

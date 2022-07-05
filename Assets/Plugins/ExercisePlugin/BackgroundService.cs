@@ -17,8 +17,6 @@ public class BackgroundService : MonoBehaviour
     [SerializeField] LineRenderer route;
     [SerializeField] CanvasGroup canvasGroup;
 
-    public int a = 43, b = 26;
-
 #if UNITY_IOS
     [DllImport("__Internal")]
     private static extern string _getData();

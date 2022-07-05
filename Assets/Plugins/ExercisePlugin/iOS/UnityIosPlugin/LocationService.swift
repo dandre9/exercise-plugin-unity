@@ -134,8 +134,6 @@ extension LocationService: CLLocationManagerDelegate {
             tempDistance = prevCoords.distance(from: manager.location ?? prevCoords)
         }
         
-        print("Distancia: \(tempDistance)")
-        
         if(lat == 0 || tempDistance >= 5) {
             distance += tempDistance
             prevCoords = manager.location ?? prevCoords
