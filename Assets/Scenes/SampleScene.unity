@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.3708985, g: 0.3783704, b: 0.35722548, a: 1}
+  m_IndirectSpecularColor: {r: 0.3731193, g: 0.38073996, b: 0.3587269, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -371,6 +371,55 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &202883909
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 202883911}
+  - component: {fileID: 202883910}
+  m_Layer: 0
+  m_Name: ExerciseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &202883910
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202883909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eddfb43615ab04950a44e84d9f7d32b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  steps: {fileID: 448144297}
+  distance: {fileID: 1554577692}
+  coords: {fileID: 1201661073}
+  altitude: {fileID: 562747028}
+  serviceRunning: {fileID: 1051058852}
+--- !u!4 &202883911
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 202883909}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &220744391
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,7 +436,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &220744392
 RectTransform:
   m_ObjectHideFlags: 0
@@ -724,7 +773,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: SyncData
         m_Mode: 1
@@ -792,7 +841,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &356002654
 RectTransform:
   m_ObjectHideFlags: 0
@@ -858,7 +907,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: ChangeRouteTransform
         m_Mode: 5
@@ -2542,7 +2591,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: StartService
         m_Mode: 1
@@ -2947,7 +2996,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &958012029
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3013,7 +3062,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: ChangeRouteTransform
         m_Mode: 5
@@ -3665,7 +3714,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1179947370
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3731,7 +3780,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: GetRouteCoords
         m_Mode: 1
@@ -4069,7 +4118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1312205912
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4135,7 +4184,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: ChangeRouteTransform
         m_Mode: 5
@@ -4404,9 +4453,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
-        m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
-        m_MethodName: StopService
+      - m_Target: {fileID: 202883910}
+        m_TargetAssemblyTypeName: UserScript, Assembly-CSharp
+        m_MethodName: StopTraning
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4538,7 +4587,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: StopService
         m_Mode: 1
@@ -4672,9 +4721,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
-        m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
-        m_MethodName: StartService
+      - m_Target: {fileID: 202883910}
+        m_TargetAssemblyTypeName: UserScript, Assembly-CSharp
+        m_MethodName: StartTraining
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4875,7 +4924,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1588389210
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4941,7 +4990,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: ChangeRouteTransform
         m_Mode: 5
@@ -5144,7 +5193,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1671733859
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5210,7 +5259,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: ChangeRouteTransform
         m_Mode: 5
@@ -5344,7 +5393,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: GetCurrentSteps
         m_Mode: 1
@@ -5522,57 +5571,6 @@ MonoBehaviour:
   m_FlexibleWidth: -1
   m_FlexibleHeight: 0.4
   m_LayoutPriority: 1
---- !u!1 &1768817486
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1768817488}
-  - component: {fileID: 1768817487}
-  m_Layer: 0
-  m_Name: BackgroundService
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1768817487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1768817486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c05d92786bcaa4f4bb189f5d9fc82b43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  steps: {fileID: 448144297}
-  distance: {fileID: 1554577692}
-  coords: {fileID: 1201661073}
-  altitude: {fileID: 562747028}
-  serviceRunning: {fileID: 1051058852}
-  route: {fileID: 220744393}
-  canvasGroup: {fileID: 974425936}
---- !u!4 &1768817488
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1768817486}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1805309978
 GameObject:
   m_ObjectHideFlags: 0
@@ -6054,7 +6052,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1978177146
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6120,7 +6118,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1768817487}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: BackgroundService, Assembly-CSharp
         m_MethodName: ChangeRouteTransform
         m_Mode: 5
