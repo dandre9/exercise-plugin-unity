@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.InteropServices;
-using TMPro;
-using UnityEngine;
+﻿#if UNITY_IOS && !UNITY_EDITOR
 using Newtonsoft.Json.Linq;
+#endif
 
 public static class ExerciseService
 {
@@ -88,8 +83,6 @@ public static class ExerciseService
 #elif UNITY_ANDROID && !UNITY_EDITOR
         permissionState = customClass.CallStatic<string>(CustomClassHasPermission, unityActivity);
 #endif
-
-        Debug.Log("PERMISSION: " + permissionState);
 
         switch (permissionState)
         {
