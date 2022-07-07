@@ -1,12 +1,13 @@
-using UnityEngine;
 using UnityEditor;
+#if UNITY_IOS
 using UnityEditor.Callbacks;
-using System.Collections;
 using UnityEditor.iOS.Xcode;
+#endif
 using System.IO;
 
 public class MyPluginPostProcessBuild
 {
+#if UNITY_IOS
     [PostProcessBuild]
     public static void ChangeXcodePlist(BuildTarget buildTarget, string pathToBuiltProject)
     {
@@ -62,4 +63,5 @@ public class MyPluginPostProcessBuild
             projCapability.WriteToFile();
         }
     }
+#endif
 }

@@ -1,6 +1,7 @@
 ﻿#if UNITY_IOS && !UNITY_EDITOR
 using Newtonsoft.Json.Linq;
 #endif
+using UnityEngine;
 
 public static class ExerciseService
 {
