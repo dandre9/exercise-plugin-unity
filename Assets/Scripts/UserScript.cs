@@ -10,8 +10,6 @@ public class UserScript : MonoBehaviour
     [SerializeField] TMP_Text coords;
     [SerializeField] TMP_Text altitude;
     [SerializeField] TMP_Text serviceRunning;
-    // [SerializeField] LineRenderer route;
-    // [SerializeField] CanvasGroup canvasGroup;
 
     ExerciseService.ExerciseData exerciseData;
 
@@ -37,6 +35,8 @@ public class UserScript : MonoBehaviour
                 Debug.Log("É NECESSÁRIO TER AS DUAS PERMISSOES");
             else if (permission == ExerciseService.ExercisePermission.DENIED_LOCATION)
                 Debug.Log("É NECESSÁRIO TER LOCALIZAÇÃO");
+            else if (permission == ExerciseService.ExercisePermission.RESTRICTED_LOCATION)
+                Debug.Log("É NECESSÁRIO HABILITAR LOCALIZAÇÃO SEMPRE");
             else if (permission == ExerciseService.ExercisePermission.DENIED_STEPS)
                 Debug.Log("É NECESSÁRIO TER ACELEROMETRO");
         }

@@ -34,7 +34,8 @@ public static class ExerciseService
         DENIED = 1,
         NEVER_ASKED = 2,
         DENIED_STEPS = 3,
-        DENIED_LOCATION = 4
+        DENIED_LOCATION = 4,
+        RESTRICTED_LOCATION = 5
     }
 
 #if UNITY_IOS && !UNITY_EDITOR
@@ -49,6 +50,12 @@ public static class ExerciseService
 
     [DllImport("__Internal")]
     private static extern string _getRouteCoords();
+
+    [DllImport("__Internal")]
+    private static extern string _hasPermission();
+
+    [DllImport("__Internal")]
+    private static extern void _requestPermission();
 
 #elif UNITY_ANDROID && !UNITY_EDITOR
     private static AndroidJavaClass unityClass = new AndroidJavaClass(UnityDefaultJavaClassName);
@@ -77,7 +84,7 @@ public static class ExerciseService
         ExercisePermission permission;
 
 #if UNITY_IOS && !UNITY_EDITOR
-        // TODO
+        permissionState = _hasPermission();
 #elif UNITY_ANDROID && !UNITY_EDITOR
         permissionState = customClass.CallStatic<string>(CustomClassHasPermission, unityActivity);
 #endif
@@ -98,6 +105,9 @@ public static class ExerciseService
             case "location":
                 permission = ExercisePermission.DENIED_LOCATION;
                 break;
+            case "restrictedLocation":
+                permission = ExercisePermission.RESTRICTED_LOCATION;
+                break;
             case "neverAsked":
                 permission = ExercisePermission.NEVER_ASKED;
                 break;
@@ -112,7 +122,7 @@ public static class ExerciseService
     public static void RequestPermission()
     {
 #if UNITY_IOS && !UNITY_EDITOR
-        //TODO
+        _requestPermission();
 #elif UNITY_ANDROID && !UNITY_EDITOR
         customClass.CallStatic(CustomClassRequestPermission);
 #endif

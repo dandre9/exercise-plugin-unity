@@ -19,8 +19,11 @@ extern "C" {
     
 #pragma mark - Functions
     
-    void _startService() {
+    void _requestPermission(){
         [[LocationService shared] requestAuthorization];
+    }
+    
+    void _startService() {        
         [[LocationService shared] start];
     }
 
@@ -44,5 +47,11 @@ extern "C" {
         NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
         
         return convertNSStringToCString(jsonString);
+    }
+    
+    char* _hasPermission(){
+        NSString *permissionState = [[LocationService shared] hasAuthorization];
+        
+        return convertNSStringToCString(permissionState);
     }
 }

@@ -1,10 +1,3 @@
-//
-//  LocationService.swift
-//  LocationServicesTutorial
-//
-//  Created by naz on 2/3/21.
-//
-
 import CoreLocation
 import CoreMotion
 import Foundation
@@ -57,9 +50,40 @@ protocol LocationServiceDelegate: AnyObject {
         }
     }
     
+    @objc public func hasAuthorization() -> String {
+        let locationStatus: CLAuthorizationStatus
+        let locationManager = CLLocationManager()
+        let pedometerStatus = CMPedometer.authorizationStatus()
+        var permissionState: String = ""
+        
+        if #available(iOS 14, *) {
+            locationStatus = locationManager.authorizationStatus
+        } else {
+            locationStatus = CLLocationManager.authorizationStatus()
+        }
+        
+        print(locationStatus)
+        
+        if(locationStatus == .authorizedAlways && pedometerStatus == .authorized){
+            permissionState = "granted"
+        } else if(locationStatus == .notDetermined && pedometerStatus == .notDetermined){
+            permissionState = "neverAsked"
+        } else if(locationStatus == .denied && pedometerStatus == .denied){
+            permissionState = "denied"
+        } else if(pedometerStatus == .denied){
+            permissionState = "steps"
+        } else if(locationStatus == .denied){
+            permissionState = "location"
+        } else if(locationStatus == .authorizedWhenInUse || locationStatus == .restricted){
+            permissionState = "restrictedLocation"
+        }
+        
+        return permissionState;
+    }
+    
     @objc public func requestAuthorization() {
         locationManager.requestWhenInUseAuthorization()
-        locationManager.requestAlwaysAuthorization()
+        startUpdating()
     }
     
     @objc public func start() {
@@ -107,13 +131,11 @@ extension LocationService: CLLocationManagerDelegate {
         case .restricted:
             print("restricted")
             //inform the user
+            self.locationManager.requestAlwaysAuthorization()
             delegate?.authorizationRestricted()
         case .authorizedWhenInUse:
-            print("authorizedWhenInUse")
-            DispatchQueue.main.async{
-                self.locationManager.requestAlwaysAuthorization()
-                self.locationManagerDidChangeAuthorization(manager)
-            }
+            print("authorizedWhenInUseALOPA")
+            self.locationManager.requestAlwaysAuthorization()
             //didAuthorized
             delegate?.didAuthorize()
         case .authorizedAlways:

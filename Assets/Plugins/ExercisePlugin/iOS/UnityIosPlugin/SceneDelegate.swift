@@ -1,10 +1,3 @@
-//
-//  SceneDelegate.swift
-//  LocationServicesTutorial
-//
-//  Created by naz on 2/2/21.
-//
-
 import UIKit
 
 @available(iOS 13.0, *)
