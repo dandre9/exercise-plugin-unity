@@ -1,0 +1,9 @@
+{
+    "name": "com.radarstudio.exerciseplugin",
+    "displayName": "Exercise Plugin",
+    "version": "1.0.0",
+    "documentationUrl": "https://github.com/dandre9/exercise-plugin-unity",
+    "changelogUrl": "https://github.com/dandre9/exercise-plugin-unity/releases",
+    "licensesUrl": "https://github.com/dandre9/exercise-plugin-unity/blob/main/LICENSE.txt",
+    "description": "This plugin tracks your outdoor acivities with step couting feature and measuring distance"
+}
