@@ -67,6 +67,7 @@ public static class ExerciseService
     private const string CustomClassGetDataMethod = "GetData";
     private const string CustomClassHasPermission = "HasPermission";
     private const string CustomClassRequestPermission = "RequestPermission";
+    private const string CustomClassOpenAppSettings = "OpenAppSettings";
 #endif    
 
     public static void StartService()
@@ -162,7 +163,7 @@ public static class ExerciseService
 #if UNITY_IOS && !UNITY_EDITOR
         _openSettings();
 #elif UNITY_ANDROID && !UNITY_EDITOR
-        //TODO
+        customClass.CallStatic(CustomClassOpenAppSettings);
 #endif
     }
 }
