@@ -54,4 +54,9 @@ extern "C" {
         
         return convertNSStringToCString(permissionState);
     }
+
+    void _openSettings () {
+        NSURL * url = [NSURL URLWithString: UIApplicationOpenSettingsURLString];
+        [[UIApplication sharedApplication] openURL: url];
+    }
 }

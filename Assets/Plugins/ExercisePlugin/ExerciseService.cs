@@ -1,4 +1,5 @@
 ﻿#if UNITY_IOS && !UNITY_EDITOR
+using System.Runtime.InteropServices;
 using Newtonsoft.Json.Linq;
 #endif
 using UnityEngine;
@@ -52,6 +53,9 @@ public static class ExerciseService
 
     [DllImport("__Internal")]
     private static extern void _requestPermission();
+
+    [DllImport("__Internal")]
+    public static extern void _openSettings();
 
 #elif UNITY_ANDROID && !UNITY_EDITOR
     private static AndroidJavaClass unityClass = new AndroidJavaClass(UnityDefaultJavaClassName);
@@ -151,5 +155,14 @@ public static class ExerciseService
 #endif
 
         return new ExerciseData(data[0], data[1], data[2], data[3], (int)data[4]);
+    }
+
+    public static void OpenAppSettings()
+    {
+#if UNITY_IOS && !UNITY_EDITOR
+        _openSettings();
+#elif UNITY_ANDROID && !UNITY_EDITOR
+        //TODO
+#endif
     }
 }

@@ -58,4 +58,8 @@ public class UserScript : MonoBehaviour
         ExerciseService.StopService();
     }
 
+    public void OpenSettings()
+    {
+        ExerciseService.OpenAppSettings();
+    }
 }
