@@ -23,6 +23,7 @@ public class MyPluginPostProcessBuild
             PlistElementDict rootDict = plist.root;
 
             // background location useage key (new in iOS 8)
+            rootDict.SetString("NSLocationWhenInUseUsageDescription", "Para registro da sua atividade física");
             rootDict.SetString("NSLocationAlwaysAndWhenInUseUsageDescription", "Para registro da sua atividade física");
             rootDict.SetString("NSMotionUsageDescription", "Habilite para contar a quantidade de passos dado durante a atividade física");
 
