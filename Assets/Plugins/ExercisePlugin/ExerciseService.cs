@@ -133,8 +133,8 @@ public static class ExerciseService
 #if UNITY_IOS && !UNITY_EDITOR
         _stopService();
 #elif UNITY_ANDROID && !UNITY_EDITOR
-    if(customClass.CallStatic<bool>(CustomClassIsServiceRunning))
-        customClass.CallStatic(CustomClassStopServiceMethod);
+        if(customClass.CallStatic<bool>(CustomClassIsServiceRunning))
+            customClass.CallStatic(CustomClassStopServiceMethod);
 #endif
     }
 
