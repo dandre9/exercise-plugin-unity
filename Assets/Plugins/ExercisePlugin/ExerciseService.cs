@@ -68,6 +68,7 @@ public static class ExerciseService
     private const string CustomClassHasPermission = "HasPermission";
     private const string CustomClassRequestPermission = "RequestPermission";
     private const string CustomClassOpenAppSettings = "OpenAppSettings";
+    private const string CustomClassIsServiceRunning = "GetServiceState";
 #endif    
 
     public static void StartService()
@@ -132,6 +133,7 @@ public static class ExerciseService
 #if UNITY_IOS && !UNITY_EDITOR
         _stopService();
 #elif UNITY_ANDROID && !UNITY_EDITOR
+    if(customClass.CallStatic<bool>(CustomClassIsServiceRunning))
         customClass.CallStatic(CustomClassStopServiceMethod);
 #endif
     }
