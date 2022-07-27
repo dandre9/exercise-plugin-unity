@@ -18,7 +18,7 @@ protocol LocationServiceDelegate: AnyObject {
 
     private let pedometer = CMPedometer()
 
-    private var lat: Double = 0, lon: Double = 0, alt: Double = 0, distance: Double = 0, steps: Int = 0
+    private var lat: Double = 0, lon: Double = 0, alt: Double = 0, distance: Double = 0, steps: Int = 0, tSteps: Int = 0
     
     private var directions: Array<String> = Array()
     
@@ -44,8 +44,8 @@ protocol LocationServiceDelegate: AnyObject {
             guard let pedometerData = pedometerData, error == nil else { return }
 
             DispatchQueue.main.async {
-                print(pedometerData.numberOfSteps.stringValue)
-                self?.steps = Int(truncating: pedometerData.numberOfSteps)
+                self?.steps = Int(truncating: pedometerData.numberOfSteps) + (self?.tSteps ?? 0)
+                print(self?.steps ?? 0)
             }
         }
     }
@@ -92,6 +92,11 @@ protocol LocationServiceDelegate: AnyObject {
     }
     
     @objc public func stop() {
+        tSteps = steps
+        prevCoords = CLLocation()
+        lat = 0
+        lon = 0
+        alt = 0
         locationManager.stopUpdatingLocation()
         pedometer.stopUpdates()
     }
@@ -102,6 +107,17 @@ protocol LocationServiceDelegate: AnyObject {
     
     @objc func getRouteCoords() -> Array<String> {
             return directions
+    }
+    
+    @objc public func resetData() {
+        lat = 0
+        lon = 0
+        alt = 0
+        distance = 0
+        directions.removeAll()
+        steps = 0
+        tSteps = 0
+        prevCoords = CLLocation()
     }
 
     private func startUpdating() {

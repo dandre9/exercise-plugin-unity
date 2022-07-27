@@ -31,6 +31,10 @@ extern "C" {
         [[LocationService shared] stop];
     }
 
+    void _resetData() {
+        [[LocationService shared] resetData];
+    }
+
     char* _getData() {
         NSArray *temp = [[LocationService shared] getData];
         NSError* error = nil;

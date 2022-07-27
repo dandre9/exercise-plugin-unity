@@ -46,6 +46,9 @@ public static class ExerciseService
     private static extern void _stopService();
 
     [DllImport("__Internal")]
+    private static extern void _resetData();
+
+    [DllImport("__Internal")]
     private static extern string _getRouteCoords();
 
     [DllImport("__Internal")]
@@ -141,10 +144,10 @@ public static class ExerciseService
 
     public static void StopService()
     {
-#if UNITY_IOS && !UNITY_EDITOR
-        _stopService();
-#elif UNITY_ANDROID && !UNITY_EDITOR
         PauseService();
+#if UNITY_IOS && !UNITY_EDITOR
+        _resetData();
+#elif UNITY_ANDROID && !UNITY_EDITOR        
         customClass.CallStatic(CustomClassResetData);   
 #endif
     }
