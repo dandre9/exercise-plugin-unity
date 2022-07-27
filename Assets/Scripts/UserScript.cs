@@ -58,6 +58,14 @@ public class UserScript : MonoBehaviour
         ExerciseService.StopService();
     }
 
+    public void PauseTraning()
+    {
+        serviceRunning.text = "Pausado";
+        serviceRunning.color = Color.yellow;
+
+        ExerciseService.PauseService();
+    }
+
     public void OpenSettings()
     {
         ExerciseService.OpenAppSettings();
