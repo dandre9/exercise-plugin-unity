@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Mapbox.Unity.Map;
 
 public class UserScript : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class UserScript : MonoBehaviour
     [SerializeField] TMP_Text coords;
     [SerializeField] TMP_Text altitude;
     [SerializeField] TMP_Text serviceRunning;
+    [SerializeField] AbstractMap map;
 
     ExerciseService.ExerciseData exerciseData;
 
@@ -15,7 +17,7 @@ public class UserScript : MonoBehaviour
     {
         ExerciseService.ExercisePermission permission = ExerciseService.HasPermission();
 
-        if (permission == ExerciseService.ExercisePermission.GRANTED)
+        if (true)
         {
             serviceRunning.text = "Ligado";
             serviceRunning.color = Color.green;
@@ -48,6 +50,9 @@ public class UserScript : MonoBehaviour
         distance.text = exerciseData.distance.ToString("N2") + " m";
         coords.text = exerciseData.lat.ToString("N7") + " , " + exerciseData.lon.ToString("N7");
         altitude.text = exerciseData.alt.ToString("N2") + " (altitude)";
+
+        map.SetCenterLatitudeLongitude(new Mapbox.Utils.Vector2d(exerciseData.lat, exerciseData.lon));
+        map.UpdateMap();
     }
 
     public void StopTraning()
