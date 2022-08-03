@@ -10,6 +10,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
     using Mapbox.Utils;
     using Mapbox.Unity.Utilities;
     using System.Collections;
+    using UnityEngine.Rendering;
 
     public class DirectionsFactory : MonoBehaviour
     {
@@ -20,10 +21,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         MeshModifier[] MeshModifiers;
         [SerializeField]
         Material _material;
-
-        [SerializeField]
-        Transform[] _waypoints;
-        private List<Vector3> _cachedWaypoints;
+        private List<double> _cachedWaypoints;
 
         [SerializeField]
         [Range(1, 10)]
@@ -37,6 +35,45 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         GameObject _directionsGO;
         private bool _recalculateNext;
 
+        [SerializeField]
+        double[,] coordsList = {
+            // {-19.95738130156992, -43.94111616290653},
+            // {-19.958316484184348, -43.9422968125221},
+            // {-19.957544388165246, -43.941809429254434},
+            // {-19.95572241763445, -43.94032987969168},
+            // {-19.95506871650044, -43.93988647313167},
+            // {-19.956298872173495, -43.939181781447864},
+            // {-19.94034828789822, -43.933101531767896},
+            // {-16.748643829507063, -43.85449843520393},
+            // {-19.92492475363458, -43.907891340074535},
+            // {-19.93070855300031, -43.98324712904912},
+            // {-19.930537221858607, -44.01786897465524}
+            {-19.93296901857714, -43.93769443316437},
+            {-19.931325391876737, -43.937289621176824},
+            {-19.93106704371101, -43.9382722850997},
+            {-19.932718929070365, -43.938802482464396},
+            {-19.93296901857714, -43.93769443316437},
+            {-19.931325391876737, -43.937289621176824},
+            {-19.93106704371101, -43.9382722850997},
+            {-19.932718929070365, -43.938802482464396},
+            {-19.93296901857714, -43.93769443316437},
+            {-19.931325391876737, -43.937289621176824},
+            {-19.93106704371101, -43.9382722850997},
+            {-19.932718929070365, -43.938802482464396},
+            {-19.93296901857714, -43.93769443316437},
+            {-19.931325391876737, -43.937289621176824},
+            {-19.93106704371101, -43.9382722850997},
+            {-19.932718929070365, -43.938802482464396},
+            {-19.93296901857714, -43.93769443316437},
+            {-19.931325391876737, -43.937289621176824},
+            {-19.93106704371101, -43.9382722850997},
+            {-19.932718929070365, -43.938802482464396},
+            {-19.93296901857714, -43.93769443316437},
+            {-19.931325391876737, -43.937289621176824},
+            {-19.93106704371101, -43.9382722850997},
+            {-19.932718929070365, -43.938802482464396},
+        };
+
         protected virtual void Awake()
         {
             if (_map == null)
@@ -45,15 +82,15 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             }
             _directions = MapboxAccess.Instance.Directions;
             _map.OnInitialized += Query;
-            _map.OnUpdated += Query;
+            // _map.OnUpdated += Query;
         }
 
         public void Start()
         {
-            _cachedWaypoints = new List<Vector3>(_waypoints.Length);
-            foreach (var item in _waypoints)
+            _cachedWaypoints = new List<double>(coordsList.Length);
+            foreach (var item in coordsList)
             {
-                _cachedWaypoints.Add(item.position);
+                _cachedWaypoints.Add(item);
             }
             _recalculateNext = false;
 
@@ -68,17 +105,18 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         protected virtual void OnDestroy()
         {
             _map.OnInitialized -= Query;
-            _map.OnUpdated -= Query;
+            // _map.OnUpdated -= Query;
         }
 
         void Query()
         {
-            var count = _waypoints.Length;
+            var count = coordsList.Length / 2;
             var wp = new Vector2d[count];
             for (int i = 0; i < count; i++)
             {
-                wp[i] = _waypoints[i].GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale);
-                Debug.Log($"mapScale({_map.WorldRelativeScale}): wp[{i}] = {_waypoints[i]} -> {wp[i]}");
+                wp[i].x = coordsList[i, 0];
+                wp[i].y = coordsList[i, 1];
+                // Debug.Log($"mapScale({_map.WorldRelativeScale}): wp[{i}] = {wp[i]}");
             }
             var _directionResource = new DirectionResource(wp, RoutingProfile.Walking);
             _directionResource.Steps = false;
@@ -87,24 +125,23 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
         public IEnumerator QueryTimer()
         {
-            while (true)
-            {
-                yield return new WaitForSeconds(UpdateFrequency);
-                for (int i = 0; i < _waypoints.Length; i++)
-                {
-                    if (_waypoints[i].position != _cachedWaypoints[i])
-                    {
-                        _recalculateNext = true;
-                        _cachedWaypoints[i] = _waypoints[i].position;
-                    }
-                }
+            yield return new WaitForSeconds(UpdateFrequency);
+            // for (int i = 0; i < coordsList.Length; i++)
+            // {
+            //     if (_waypoints[i].position != _cachedWaypoints[i])
+            //     {
+            //         _recalculateNext = true;
+            //         _cachedWaypoints[i] = _waypoints[i].position;
+            //     }
+            // }
 
-                if (_recalculateNext)
-                {
-                    Query();
-                    _recalculateNext = false;
-                }
-            }
+            // _recalculateNext = true;
+
+            // if (_recalculateNext)
+            // {
+            Query();
+            // _recalculateNext = false;
+            // }
         }
 
         void HandleDirectionsResponse(DirectionsResponse response)
@@ -159,7 +196,25 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
             mesh.RecalculateNormals();
             _directionsGO.AddComponent<MeshRenderer>().material = _material;
+
+            Transform meshCenter = transform;
+            meshCenter.position = mesh.bounds.center;
+            _map.SetCenterLatitudeLongitude(meshCenter.GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale));
+            _map.UpdateMap();
+
+            if (mesh.bounds.size.x >= 125 || mesh.bounds.size.z >= 250)
+            {
+                _map.SetZoom(_map.Zoom - 1);
+                _map.UpdateMap();
+                Query();
+            }
+
             return _directionsGO;
+        }
+
+        public void UpdateMap()
+        {
+            Query();
         }
     }
 }
