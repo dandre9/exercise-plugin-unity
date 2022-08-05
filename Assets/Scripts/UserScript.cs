@@ -52,7 +52,7 @@ public class UserScript : MonoBehaviour
         altitude.text = exerciseData.alt.ToString("N2") + " (altitude)";
 
         map.SetCenterLatitudeLongitude(new Mapbox.Utils.Vector2d(exerciseData.lat, exerciseData.lon));
-        map.UpdateMap();
+        map.UpdateMap(14f);
     }
 
     public void StopTraning()

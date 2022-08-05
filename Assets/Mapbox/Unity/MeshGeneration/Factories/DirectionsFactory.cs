@@ -26,6 +26,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         [SerializeField]
         [Range(1, 10)]
         private float UpdateFrequency = 2;
+        [SerializeField] int routeSize = 300;
 
 
 
@@ -37,17 +38,17 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
         [SerializeField]
         double[,] coordsList = {
-            {-19.95738130156992, -43.94111616290653},
-            {-19.958316484184348, -43.9422968125221},
-            {-19.957544388165246, -43.941809429254434},
-            {-19.95572241763445, -43.94032987969168},
-            {-19.95506871650044, -43.93988647313167},
-            {-19.956298872173495, -43.939181781447864},
-            {-19.94034828789822, -43.933101531767896},
+            // {-19.95738130156992, -43.94111616290653},
+            // {-19.958316484184348, -43.9422968125221},
+            // {-19.957544388165246, -43.941809429254434},
+            // {-19.95572241763445, -43.94032987969168},
+            // {-19.95506871650044, -43.93988647313167},
+            // {-19.956298872173495, -43.939181781447864},
+            // {-19.94034828789822, -43.933101531767896}
             // {-16.748643829507063, -43.85449843520393},
             // {-19.92492475363458, -43.907891340074535},
             // {-19.93070855300031, -43.98324712904912},
-            // {-19.930537221858607, -44.01786897465524}
+            // {-19.930537221858607, -44.01786897465524},
             // {-19.93296901857714, -43.93769443316437},
             // {-19.931325391876737, -43.937289621176824},
             // {-19.93106704371101, -43.9382722850997},
@@ -88,20 +89,15 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
         public void Start()
         {
-            _cachedWaypoints = new List<double>(coordsList.Length);
-            foreach (var item in coordsList)
-            {
-                _cachedWaypoints.Add(item);
-            }
-            _recalculateNext = false;
-
             foreach (var modifier in MeshModifiers)
             {
                 modifier.Initialize();
             }
 
-            // StartCoroutine(QueryTimer());
-            Query();
+            // _map.SetCenterLatitudeLongitude(new Vector2d(-19.9494027, -43.9377527));
+            // _map.UpdateMap();
+
+            // Query();
         }
 
         protected virtual void OnDestroy()
@@ -123,27 +119,6 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             var _directionResource = new DirectionResource(wp, RoutingProfile.Walking);
             _directionResource.Steps = false;
             _directions.Query(_directionResource, HandleDirectionsResponse);
-        }
-
-        public IEnumerator QueryTimer()
-        {
-            yield return new WaitForSeconds(UpdateFrequency);
-            // for (int i = 0; i < coordsList.Length; i++)
-            // {
-            //     if (_waypoints[i].position != _cachedWaypoints[i])
-            //     {
-            //         _recalculateNext = true;
-            //         _cachedWaypoints[i] = _waypoints[i].position;
-            //     }
-            // }
-
-            // _recalculateNext = true;
-
-            // if (_recalculateNext)
-            // {
-            Query();
-            // _recalculateNext = false;
-            // }
         }
 
         void HandleDirectionsResponse(DirectionsResponse response)
@@ -204,12 +179,12 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             _map.SetCenterLatitudeLongitude(meshCenter.GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale));
             _map.UpdateMap();
 
-            if (mesh.bounds.size.x >= 125 || mesh.bounds.size.z >= 250)
+            if (mesh.bounds.size.x >= routeSize || mesh.bounds.size.z >= routeSize)
             {
                 int zoomToRemove = 0;
                 float routeW = mesh.bounds.size.x, routeH = mesh.bounds.size.z;
 
-                while (routeW >= 125 || routeH >= 250)
+                while (routeW >= routeSize || routeH >= routeSize)
                 {
                     zoomToRemove++;
                     routeW /= 2;
