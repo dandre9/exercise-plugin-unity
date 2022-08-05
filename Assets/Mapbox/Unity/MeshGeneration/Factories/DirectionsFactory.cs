@@ -32,11 +32,10 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
         private Directions _directions;
         private int _counter;
-
         GameObject _directionsGO;
         private bool _recalculateNext;
+        // List<MeshModifier> MeshModifiers;
 
-        [SerializeField]
         double[,] coordsList = {
             {-19.95738130156992, -43.94111616290653},
             {-19.958316484184348, -43.9422968125221},
@@ -83,8 +82,6 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 _map = FindObjectOfType<AbstractMap>();
             }
             _directions = MapboxAccess.Instance.Directions;
-            _map.OnInitialized += Query;
-            // _map.OnUpdated += Query;
         }
 
         public void Start()
@@ -94,15 +91,12 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 modifier.Initialize();
             }
 
-            // _map.SetCenterLatitudeLongitude(new Vector2d(-19.9494027, -43.9377527));
-            // _map.UpdateMap();
-
-            Query();
+            // Query();
         }
 
         protected virtual void OnDestroy()
         {
-            _map.OnInitialized -= Query;
+            // _map.OnInitialized -= Query;
             // _map.OnUpdated -= Query;
         }
 
@@ -110,12 +104,13 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         {
             var count = coordsList.Length / 2;
             var wp = new Vector2d[count];
+
             for (int i = 0; i < count; i++)
             {
                 wp[i].x = coordsList[i, 0];
                 wp[i].y = coordsList[i, 1];
-                // Debug.Log($"mapScale({_map.WorldRelativeScale}): wp[{i}] = {wp[i]}");
             }
+
             var _directionResource = new DirectionResource(wp, RoutingProfile.Walking);
             _directionResource.Steps = false;
             _directions.Query(_directionResource, HandleDirectionsResponse);
@@ -204,6 +199,11 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         public void UpdateMap()
         {
             Query();
+        }
+
+        public void DrawRoute()
+        {
+
         }
     }
 }
