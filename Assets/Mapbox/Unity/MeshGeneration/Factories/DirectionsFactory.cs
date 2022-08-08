@@ -203,7 +203,9 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
         public void DrawRoute()
         {
+            coordsList = ExerciseService.GetRouteCoords();
 
+            Query();
         }
     }
 }
