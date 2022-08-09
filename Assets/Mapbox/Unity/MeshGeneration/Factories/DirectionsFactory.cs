@@ -203,8 +203,8 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             {
                 if (j == (indexes.Count / indexOffset) - 1)
                 {
-                    newCoords[j, 0] = coordsList[indexes[j], 0];
-                    newCoords[j, 1] = coordsList[indexes[j], 1];
+                    newCoords[j, 0] = coordsList[indexes[indexes.Count - 1], 0];
+                    newCoords[j, 1] = coordsList[indexes[indexes.Count - 1], 1];
                 }
                 else
                 {
