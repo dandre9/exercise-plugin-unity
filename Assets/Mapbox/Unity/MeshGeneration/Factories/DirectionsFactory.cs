@@ -9,8 +9,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
     using Modifiers;
     using Mapbox.Utils;
     using Mapbox.Unity.Utilities;
-    using System.Collections;
-    using UnityEngine.Rendering;
+    using System;
 
     public class DirectionsFactory : MonoBehaviour
     {
@@ -34,46 +33,9 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         private int _counter;
         GameObject _directionsGO;
         private bool _recalculateNext;
-        // List<MeshModifier> MeshModifiers;
+        const int MAX_COORDS_NUMBER = 25;
 
-        double[,] coordsList = {
-            {-19.95738130156992, -43.94111616290653},
-            {-19.958316484184348, -43.9422968125221},
-            {-19.957544388165246, -43.941809429254434},
-            {-19.95572241763445, -43.94032987969168},
-            {-19.95506871650044, -43.93988647313167},
-            {-19.956298872173495, -43.939181781447864},
-            {-19.94034828789822, -43.933101531767896}
-            // {-16.748643829507063, -43.85449843520393},
-            // {-19.92492475363458, -43.907891340074535},
-            // {-19.93070855300031, -43.98324712904912},
-            // {-19.930537221858607, -44.01786897465524},
-            // {-19.93296901857714, -43.93769443316437},
-            // {-19.931325391876737, -43.937289621176824},
-            // {-19.93106704371101, -43.9382722850997},
-            // {-19.932718929070365, -43.938802482464396},
-            // {-19.93296901857714, -43.93769443316437},
-            // {-19.931325391876737, -43.937289621176824},
-            // {-19.93106704371101, -43.9382722850997},
-            // {-19.932718929070365, -43.938802482464396},
-            // {-19.93296901857714, -43.93769443316437},
-            // {-19.931325391876737, -43.937289621176824},
-            // {-19.93106704371101, -43.9382722850997},
-            // {-19.932718929070365, -43.938802482464396},
-            // {-19.93296901857714, -43.93769443316437},
-            // {-19.931325391876737, -43.937289621176824},
-            // {-19.93106704371101, -43.9382722850997},
-            // {-19.932718929070365, -43.938802482464396},
-            // {-19.93296901857714, -43.93769443316437},
-            // {-19.931325391876737, -43.937289621176824},
-            // {-19.93106704371101, -43.9382722850997},
-            // {-19.932718929070365, -43.938802482464396},
-            // {-19.93296901857714, -43.93769443316437},
-            // {-19.931325391876737, -43.937289621176824},
-            // {-19.93106704371101, -43.9382722850997},
-            // {-19.932718929070365, -43.938802482464396},
-            // {-19.93189951045794, -43.93800302294052}
-        };
+        double[,] coordsList;
 
         protected virtual void Awake()
         {
@@ -204,8 +166,77 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         public void DrawRoute()
         {
             coordsList = ExerciseService.GetRouteCoords();
+            int indexToCompare = 0, indexOffset = 1;
+            List<int> indexes = new List<int>();
+
+            for (int i = 0; i < coordsList.Length / 3; i++)
+            {
+                if (i == 0)
+                    continue;
+
+                double nDistance = GetDistance(coordsList[i - 1, 0], coordsList[i, 0],
+                    coordsList[i - 1, 1], coordsList[i, 1],
+                    coordsList[i - 1, 2], coordsList[i, 2]);
+
+                if (nDistance <= 100)
+                {
+                    double distance = GetDistance(coordsList[indexToCompare, 0], coordsList[i, 0],
+                    coordsList[indexToCompare, 1], coordsList[i, 1],
+                    coordsList[indexToCompare, 2], coordsList[i, 2]);
+
+                    if (distance >= 20)
+                    {
+                        indexes.Add(i);
+                        indexToCompare = i;
+                    }
+                }
+            }
+
+            if (indexes.Count > MAX_COORDS_NUMBER)
+            {
+                indexOffset = (int)Math.Ceiling((double)indexes.Count / MAX_COORDS_NUMBER);
+            }
+
+            double[,] newCoords = new double[indexes.Count / indexOffset, 2];
+
+            for (int j = 0; j < indexes.Count / indexOffset; j++)
+            {
+                if (j == (indexes.Count / indexOffset) - 1)
+                {
+                    newCoords[j, 0] = coordsList[indexes[j], 0];
+                    newCoords[j, 1] = coordsList[indexes[j], 1];
+                }
+                else
+                {
+                    newCoords[j, 0] = coordsList[indexes[j * indexOffset], 0];
+                    newCoords[j, 1] = coordsList[indexes[j * indexOffset], 1];
+                }
+            }
+
+            coordsList = newCoords;
 
             Query();
+        }
+
+        public static double GetDistance(double lat1, double lat2, double lon1,
+                                         double lon2, double el1, double el2)
+        {
+            if (lat1 == 0)
+                return 0;
+
+            int R = 6371; // Radius of the earth
+
+            double latDistance = (Math.PI / 180) * (lat2 - lat1);
+            double lonDistance = (Math.PI / 180) * (lon2 - lon1);
+            double a = Math.Sin(latDistance / 2) * Math.Sin(latDistance / 2)
+                    + Math.Cos((Math.PI / 180) * (lat1)) * Math.Cos((Math.PI / 180) * (lat2))
+                    * Math.Sin(lonDistance / 2) * Math.Sin(lonDistance / 2);
+            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+            double distance = R * c * 1000; // convert to meters
+
+            distance = Math.Pow(distance, 2);
+
+            return Math.Sqrt(distance);
         }
     }
 }

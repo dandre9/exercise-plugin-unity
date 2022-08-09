@@ -17,7 +17,7 @@ public class UserScript : MonoBehaviour
     {
         ExerciseService.ExercisePermission permission = ExerciseService.HasPermission();
 
-        if (true)
+        if (permission == ExerciseService.ExercisePermission.GRANTED)
         {
             serviceRunning.text = "Ligado";
             serviceRunning.color = Color.green;

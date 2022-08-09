@@ -383,8 +383,6 @@ namespace Mapbox.Unity.Map
             double xDelta = centerLatitudeLongitude.x;
             double zDelta = centerLatitudeLongitude.y;
 
-            Debug.Log($"LATLON: {latLon.x},{latLon.y}");
-
             xDelta = xDelta > 0 ? Mathd.Min(xDelta, Mapbox.Utils.Constants.LatitudeMax) : Mathd.Max(xDelta, -Mapbox.Utils.Constants.LatitudeMax);
             zDelta = zDelta > 0 ? Mathd.Min(zDelta, Mapbox.Utils.Constants.LongitudeMax) : Mathd.Max(zDelta, -Mapbox.Utils.Constants.LongitudeMax);
 
@@ -1129,7 +1127,6 @@ namespace Mapbox.Unity.Map
 
         public virtual void SetCenterLatitudeLongitude(Vector2d centerLatitudeLongitude)
         {
-            Debug.Log("CENTRAO DO MAPA: " + centerLatitudeLongitude);
             _options.locationOptions.latitudeLongitude = string.Format("{0}, {1}", centerLatitudeLongitude.x, centerLatitudeLongitude.y);
             _centerLatitudeLongitude = centerLatitudeLongitude;
         }
