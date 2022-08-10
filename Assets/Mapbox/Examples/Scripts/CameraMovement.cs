@@ -4,11 +4,13 @@ namespace Mapbox.Examples
     using UnityEngine.EventSystems;
     using Mapbox.Unity.Map;
     using Mapbox.Unity.Utilities;
+    using Mapbox.Unity.MeshGeneration.Factories;
 
     public class CameraMovement : MonoBehaviour
     {
         [SerializeField]
         AbstractMap _map;
+        [SerializeField] DirectionsFactory directionsFactory;
 
         [SerializeField]
         float _panSpeed = 20f;
@@ -59,11 +61,22 @@ namespace Mapbox.Examples
             }
         }
 
-        void ZoomMapUsingTouchOrMouse(float zoomFactor)
+        void ZoomMapUsingTouchOrMouse(float y)
         {
-            var y = zoomFactor * _zoomSpeed;
-            _map.SetZoom(_map.Zoom + (y * Time.deltaTime));
-            _map.UpdateMap();
+            if (Mathf.Abs(y) > .1f)
+            {
+                float zoomFactor = y > 0 ? 0.1f : -0.1f;
+
+                if (_map.Zoom == 20 && zoomFactor >= 0 || _map.Zoom == 4 && zoomFactor <= 0)
+                    zoomFactor = 0;
+
+                float newZoom = (float)((decimal)_map.Zoom + (decimal)zoomFactor);
+                _map.SetZoom(newZoom);
+                _map.UpdateMap();
+
+                if (newZoom % 1 == 0)
+                    directionsFactory.UpdateMap();
+            }
         }
 
         void HandleMouseAndKeyBoard()
@@ -100,11 +113,21 @@ namespace Mapbox.Examples
 
                 var x = Input.GetAxis("Horizontal");
                 var z = Input.GetAxis("Vertical");
-                var y = Input.GetAxis("Mouse ScrollWheel") * _zoomSpeed;
+                var y = Input.GetAxis("Mouse ScrollWheel");
+
                 if (!(Mathf.Approximately(x, 0) && Mathf.Approximately(y, 0) && Mathf.Approximately(z, 0)))
                 {
-                    _map.SetZoom(_map.Zoom + (y * Time.deltaTime * _zoomSpeed));
+                    float zoomFactor = y > 0 ? 0.1f : -0.1f;
+
+                    if (_map.Zoom == 20 && zoomFactor >= 0 || _map.Zoom == 4 && zoomFactor <= 0)
+                        zoomFactor = 0;
+
+                    float newZoom = (float)((decimal)_map.Zoom + (decimal)zoomFactor);
+                    _map.SetZoom(newZoom);
                     _map.UpdateMap();
+
+                    if (newZoom % 1 == 0)
+                        directionsFactory.UpdateMap();
                 }
             }
         }

@@ -3648,6 +3648,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _map: {fileID: 799574017}
+  directionsFactory: {fileID: 1093839948}
   _panSpeed: 20
   _zoomSpeed: 1
   _referenceCamera: {fileID: 963194227}
