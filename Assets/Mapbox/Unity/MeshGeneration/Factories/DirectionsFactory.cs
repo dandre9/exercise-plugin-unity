@@ -30,10 +30,12 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
 
         private Directions _directions;
+        DirectionsResponse directionsResponse;
         private int _counter;
         GameObject _directionsGO;
-        private bool _recalculateNext;
+        private bool _recalculateNext, adjustZoom;
         const int MAX_COORDS_NUMBER = 25;
+        Mesh mesh;
 
         double[,] coordsList;
 
@@ -85,6 +87,8 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 return;
             }
 
+            directionsResponse = response;
+
             var meshData = new MeshData();
             var dat = new List<Vector3>();
             foreach (var point in response.Routes[0].Geometry)
@@ -110,7 +114,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 _directionsGO.Destroy();
             }
             _directionsGO = new GameObject("direction waypoint " + " entity");
-            var mesh = _directionsGO.AddComponent<MeshFilter>().mesh;
+            mesh = _directionsGO.AddComponent<MeshFilter>().mesh;
             mesh.subMeshCount = data.Triangles.Count;
 
             mesh.SetVertices(data.Vertices);
@@ -136,6 +140,20 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             _map.SetCenterLatitudeLongitude(meshCenter.GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale));
             _map.UpdateMap();
 
+            _directionsGO.transform.SetParent(_map.transform);
+
+            if (adjustZoom)
+            {
+                adjustZoom = false;
+                AdjustMapZoom();
+            }
+
+
+            return _directionsGO;
+        }
+
+        void AdjustMapZoom()
+        {
             if (mesh.bounds.size.x >= routeSize || mesh.bounds.size.z >= routeSize)
             {
                 int zoomToRemove = 0;
@@ -150,21 +168,20 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
                 _map.SetZoom(_map.Zoom - zoomToRemove);
                 _map.UpdateMap();
-                Query();
+                HandleDirectionsResponse(directionsResponse);
             }
-
-            _directionsGO.transform.SetParent(_map.transform);
-
-            return _directionsGO;
         }
 
         public void UpdateMap()
         {
-            Query();
+            HandleDirectionsResponse(directionsResponse);
         }
 
         public void DrawRoute()
         {
+            adjustZoom = true;
+            _map.SetZoom(22f);
+            _map.UpdateMap();
             coordsList = ExerciseService.GetRouteCoords();
             int indexToCompare = 0, indexOffset = 1;
             List<int> indexes = new List<int>();
