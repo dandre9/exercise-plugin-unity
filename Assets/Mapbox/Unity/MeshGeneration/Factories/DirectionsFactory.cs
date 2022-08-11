@@ -2,6 +2,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 {
     using UnityEngine;
     using Mapbox.Directions;
+    using Mapbox.MapMatching;
     using System.Collections.Generic;
     using System.Linq;
     using Mapbox.Unity.Map;
@@ -29,8 +30,10 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
 
 
-        private Directions _directions;
+        Directions _directions;
+        MapMatcher mapMatcher;
         DirectionsResponse directionsResponse;
+        MapMatchingResponse mapMatchingResponse;
         private int _counter;
         GameObject _directionsGO;
         private bool _recalculateNext, adjustZoom;
@@ -46,6 +49,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 _map = FindObjectOfType<AbstractMap>();
             }
             _directions = MapboxAccess.Instance.Directions;
+            mapMatcher = MapboxAccess.Instance.MapMatcher;
         }
 
         public void Start()
@@ -77,7 +81,38 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
             var _directionResource = new DirectionResource(wp, RoutingProfile.Walking);
             _directionResource.Steps = false;
-            _directions.Query(_directionResource, HandleDirectionsResponse);
+            var mapMatchingResource = new MapMatchingResource();
+            mapMatchingResource.Steps = false;
+            mapMatchingResource.Coordinates = wp;
+            // _directions.Query(_directionResource, HandleDirectionsResponse);
+            mapMatcher.Match(mapMatchingResource, HandleMapMatchingResponse);
+        }
+
+        void HandleMapMatchingResponse(MapMatchingResponse response)
+        {
+            if (response == null || null == response.Matchings || response.Matchings.Length < 1)
+            {
+                return;
+            }
+
+            mapMatchingResponse = response;
+
+            var meshData = new MeshData();
+            var dat = new List<Vector3>();
+            foreach (var point in response.Matchings[0].Geometry)
+            {
+                dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
+            }
+
+            var feat = new VectorFeatureUnity();
+            feat.Points.Add(dat);
+
+            foreach (MeshModifier mod in MeshModifiers.Where(x => x.Active))
+            {
+                mod.Run(feat, meshData, _map.WorldRelativeScale);
+            }
+
+            CreateGameObject(meshData);
         }
 
         void HandleDirectionsResponse(DirectionsResponse response)
@@ -166,13 +201,15 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
                 _map.SetZoom(_map.Zoom - zoomToRemove);
                 _map.UpdateMap();
-                HandleDirectionsResponse(directionsResponse);
+                // HandleDirectionsResponse(directionsResponse);
+                HandleMapMatchingResponse(mapMatchingResponse);
             }
         }
 
         public void UpdateMap()
         {
-            HandleDirectionsResponse(directionsResponse);
+            // HandleDirectionsResponse(directionsResponse);
+            HandleMapMatchingResponse(mapMatchingResponse);
         }
 
         public void DrawRoute()
