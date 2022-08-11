@@ -134,16 +134,14 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
             mesh.RecalculateNormals();
             _directionsGO.AddComponent<MeshRenderer>().material = _material;
-
-            Transform meshCenter = transform;
-            meshCenter.position = mesh.bounds.center;
-            _map.SetCenterLatitudeLongitude(meshCenter.GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale));
-            _map.UpdateMap();
-
             _directionsGO.transform.SetParent(_map.transform);
 
             if (adjustZoom)
             {
+                Transform meshCenter = transform;
+                meshCenter.position = mesh.bounds.center;
+                _map.SetCenterLatitudeLongitude(meshCenter.GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale));
+                _map.UpdateMap();
                 adjustZoom = false;
                 AdjustMapZoom();
             }

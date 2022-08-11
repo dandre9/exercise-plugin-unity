@@ -5,6 +5,7 @@ namespace Mapbox.Examples
     using Mapbox.Unity.Map;
     using Mapbox.Unity.Utilities;
     using Mapbox.Unity.MeshGeneration.Factories;
+    using System;
 
     public class CameraMovement : MonoBehaviour
     {
@@ -24,7 +25,7 @@ namespace Mapbox.Examples
         Quaternion _originalRotation;
         Vector3 _origin;
         Vector3 _delta;
-        bool _shouldDrag;
+        bool _shouldDrag, moved;
 
         void HandleTouch()
         {
@@ -70,6 +71,16 @@ namespace Mapbox.Examples
                 if (_map.Zoom == 20 && zoomFactor >= 0 || _map.Zoom == 4 && zoomFactor <= 0)
                     zoomFactor = 0;
 
+                if (moved)
+                {
+                    moved = false;
+                    _map.SetZoom(Convert.ToInt32(_map.Zoom));
+                    _map.SetCenterLatitudeLongitude(transform.GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale));
+                    _map.UpdateMap();
+                    transform.localPosition = _map.GeoToWorldPosition(_map.CenterLatitudeLongitude) + Vector3.up * 100;
+                    directionsFactory.UpdateMap();
+                }
+
                 float newZoom = (float)((decimal)_map.Zoom + (decimal)zoomFactor);
                 _map.SetZoom(newZoom);
                 _map.UpdateMap();
@@ -100,6 +111,7 @@ namespace Mapbox.Examples
 
             if (_shouldDrag == true)
             {
+                moved = true;
                 var offset = _origin - _delta;
                 offset.y = transform.localPosition.y;
                 transform.localPosition = offset;
@@ -118,6 +130,16 @@ namespace Mapbox.Examples
                 if (!(Mathf.Approximately(x, 0) && Mathf.Approximately(y, 0) && Mathf.Approximately(z, 0)))
                 {
                     float zoomFactor = y > 0 ? 0.1f : -0.1f;
+
+                    if (moved)
+                    {
+                        moved = false;
+                        _map.SetZoom(Convert.ToInt32(_map.Zoom));
+                        _map.SetCenterLatitudeLongitude(transform.GetGeoPosition(_map.CenterMercator, _map.WorldRelativeScale));
+                        _map.UpdateMap();
+                        transform.localPosition = _map.GeoToWorldPosition(_map.CenterLatitudeLongitude) + Vector3.up * 100;
+                        directionsFactory.UpdateMap();
+                    }
 
                     if (_map.Zoom == 20 && zoomFactor >= 0 || _map.Zoom == 4 && zoomFactor <= 0)
                         zoomFactor = 0;
