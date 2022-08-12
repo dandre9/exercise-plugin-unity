@@ -3647,9 +3647,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9527fd56bc6a0c549a1e550219f9b16e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _map: {fileID: 799574017}
+  _mapManager: {fileID: 799574017}
   directionsFactory: {fileID: 1093839948}
-  _panSpeed: 20
+  _panSpeed: 2
   _zoomSpeed: 1
   _referenceCamera: {fileID: 963194227}
 --- !u!1 &964405993
@@ -4322,7 +4322,6 @@ MonoBehaviour:
   MeshModifiers:
   - {fileID: 11400000, guid: 72a54fd58e79618408c60d91df61d553, type: 2}
   _material: {fileID: 2100000, guid: ef6c956ca085647fba4624a08c344419, type: 2}
-  UpdateFrequency: 1
   routeSize: 125
 --- !u!4 &1093839949
 Transform:

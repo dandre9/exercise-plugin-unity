@@ -14,32 +14,20 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
     public class DirectionsFactory : MonoBehaviour
     {
-        [SerializeField]
-        AbstractMap _map;
-
-        [SerializeField]
-        MeshModifier[] MeshModifiers;
-        [SerializeField]
-        Material _material;
-        private List<double> _cachedWaypoints;
-
-        [SerializeField]
-        [Range(1, 10)]
-        private float UpdateFrequency = 2;
+        [SerializeField] AbstractMap _map;
+        [SerializeField] MeshModifier[] MeshModifiers;
+        [SerializeField] Material _material;
         [SerializeField] int routeSize = 300;
 
-
-
-        Directions _directions;
+        // Directions _directions;
         MapMatcher mapMatcher;
-        DirectionsResponse directionsResponse;
+        // DirectionsResponse directionsResponse;
         MapMatchingResponse mapMatchingResponse;
         private int _counter;
         GameObject _directionsGO;
-        private bool _recalculateNext, adjustZoom;
-        const int MAX_COORDS_NUMBER = 25;
+        private bool adjustZoom;
+        const int MAX_COORDS_NUMBER = 100;
         Mesh mesh;
-
         double[,] coordsList;
 
         protected virtual void Awake()
@@ -48,7 +36,6 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             {
                 _map = FindObjectOfType<AbstractMap>();
             }
-            _directions = MapboxAccess.Instance.Directions;
             mapMatcher = MapboxAccess.Instance.MapMatcher;
         }
 
@@ -58,14 +45,6 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             {
                 modifier.Initialize();
             }
-
-            // Query();
-        }
-
-        protected virtual void OnDestroy()
-        {
-            // _map.OnInitialized -= Query;
-            // _map.OnUpdated -= Query;
         }
 
         void Query()
@@ -78,13 +57,9 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 wp[i].x = coordsList[i, 0];
                 wp[i].y = coordsList[i, 1];
             }
-
-            var _directionResource = new DirectionResource(wp, RoutingProfile.Walking);
-            _directionResource.Steps = false;
             var mapMatchingResource = new MapMatchingResource();
             mapMatchingResource.Steps = false;
             mapMatchingResource.Coordinates = wp;
-            // _directions.Query(_directionResource, HandleDirectionsResponse);
             mapMatcher.Match(mapMatchingResource, HandleMapMatchingResponse);
         }
 
@@ -100,33 +75,6 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             var meshData = new MeshData();
             var dat = new List<Vector3>();
             foreach (var point in response.Matchings[0].Geometry)
-            {
-                dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
-            }
-
-            var feat = new VectorFeatureUnity();
-            feat.Points.Add(dat);
-
-            foreach (MeshModifier mod in MeshModifiers.Where(x => x.Active))
-            {
-                mod.Run(feat, meshData, _map.WorldRelativeScale);
-            }
-
-            CreateGameObject(meshData);
-        }
-
-        void HandleDirectionsResponse(DirectionsResponse response)
-        {
-            if (response == null || null == response.Routes || response.Routes.Count < 1)
-            {
-                return;
-            }
-
-            directionsResponse = response;
-
-            var meshData = new MeshData();
-            var dat = new List<Vector3>();
-            foreach (var point in response.Routes[0].Geometry)
             {
                 dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
             }
@@ -201,14 +149,12 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
                 _map.SetZoom(_map.Zoom - zoomToRemove);
                 _map.UpdateMap();
-                // HandleDirectionsResponse(directionsResponse);
                 HandleMapMatchingResponse(mapMatchingResponse);
             }
         }
 
         public void UpdateMap()
         {
-            // HandleDirectionsResponse(directionsResponse);
             HandleMapMatchingResponse(mapMatchingResponse);
         }
 
