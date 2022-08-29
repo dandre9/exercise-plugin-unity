@@ -177,7 +177,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                     coordsList[i - 1, 1], coordsList[i, 1],
                     coordsList[i - 1, 2], coordsList[i, 2]);
 
-                if (nDistance <= 100)
+                if (nDistance <= 30)
                 {
                     double distance = GetDistance(coordsList[indexToCompare, 0], coordsList[i, 0],
                     coordsList[indexToCompare, 1], coordsList[i, 1],
