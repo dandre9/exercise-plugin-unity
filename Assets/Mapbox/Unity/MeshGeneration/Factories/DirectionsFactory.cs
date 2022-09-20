@@ -22,7 +22,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         // Directions _directions;
         MapMatcher mapMatcher;
         // DirectionsResponse directionsResponse;
-        MapMatchingResponse mapMatchingResponse;
+        Vector2d[] mapMatchingResponse;
         private int _counter;
         GameObject _directionsGO;
         private bool adjustZoom;
@@ -57,15 +57,16 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 wp[i].x = coordsList[i, 0];
                 wp[i].y = coordsList[i, 1];
             }
-            var mapMatchingResource = new MapMatchingResource();
-            mapMatchingResource.Steps = false;
-            mapMatchingResource.Coordinates = wp;
-            mapMatcher.Match(mapMatchingResource, HandleMapMatchingResponse);
+            // var mapMatchingResource = new MapMatchingResource();
+            // mapMatchingResource.Steps = false;
+            // mapMatchingResource.Coordinates = wp;
+            // mapMatcher.Match(mapMatchingResource, HandleMapMatchingResponse);
+            HandleMapMatchingResponse(wp);
         }
 
-        void HandleMapMatchingResponse(MapMatchingResponse response)
+        void HandleMapMatchingResponse(Vector2d[] response)
         {
-            if (response == null || null == response.Matchings || response.Matchings.Length < 1)
+            if (response == null || response.Length == 0)
             {
                 return;
             }
@@ -74,7 +75,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
             var meshData = new MeshData();
             var dat = new List<Vector3>();
-            foreach (var point in response.Matchings[0].Geometry)
+            foreach (var point in response)
             {
                 dat.Add(Conversions.GeoToWorldPosition(point.x, point.y, _map.CenterMercator, _map.WorldRelativeScale).ToVector3xz());
             }
@@ -176,13 +177,13 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                     coordsList[i - 1, 1], coordsList[i, 1],
                     coordsList[i - 1, 2], coordsList[i, 2]);
 
-                if (nDistance <= 100)
+                if (nDistance <= 30)
                 {
                     double distance = GetDistance(coordsList[indexToCompare, 0], coordsList[i, 0],
                     coordsList[indexToCompare, 1], coordsList[i, 1],
                     coordsList[indexToCompare, 2], coordsList[i, 2]);
 
-                    if (distance >= 20)
+                    if (distance >= 10)
                     {
                         indexes.Add(i);
                         indexToCompare = i;
@@ -190,10 +191,10 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 }
             }
 
-            if (indexes.Count > MAX_COORDS_NUMBER)
-            {
-                indexOffset = (int)Math.Ceiling((double)indexes.Count / MAX_COORDS_NUMBER);
-            }
+            // if (indexes.Count > MAX_COORDS_NUMBER)
+            // {
+            //     indexOffset = (int)Math.Ceiling((double)indexes.Count / MAX_COORDS_NUMBER);
+            // }
 
             double[,] newCoords = new double[indexes.Count / indexOffset, 2];
 
