@@ -277,7 +277,7 @@ public static class ExerciseService
         return new ExerciseData(data[0], data[1], data[2], data[3], (int)data[4]);
     }
 
-    public static double[,] GetRouteCoords()
+    public static double[][] GetRouteCoords()
     {
         string[] coordsString = new string[0];
         int numOfDirections = 0;
@@ -299,15 +299,17 @@ public static class ExerciseService
         coordsString = customClass.CallStatic<string[]>(CustomClassGetRouteCoordsMethod);
         numOfDirections = coordsString.Length;
 #endif        
-        double[,] coordsArray = new double[numOfDirections, 3];
+        double[][] coordsArray = new double[numOfDirections][];
 
         for (int i = 0; i < numOfDirections; i++)
         {
             string[] temp = coordsString[i].Split(";");
 
-            coordsArray[i, 0] = float.Parse(temp[0], CultureInfo.InvariantCulture);
-            coordsArray[i, 1] = float.Parse(temp[1], CultureInfo.InvariantCulture);
-            coordsArray[i, 2] = float.Parse(temp[2], CultureInfo.InvariantCulture);
+            coordsArray[i] = new double[] {
+                float.Parse(temp[0], CultureInfo.InvariantCulture),
+                float.Parse(temp[1], CultureInfo.InvariantCulture),
+                float.Parse(temp[2], CultureInfo.InvariantCulture)
+            };
         }
 
         return coordsArray;
