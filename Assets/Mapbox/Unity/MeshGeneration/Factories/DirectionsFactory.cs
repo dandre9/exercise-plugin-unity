@@ -28,7 +28,7 @@ namespace Mapbox.Unity.MeshGeneration.Factories
         private bool adjustZoom;
         const int MAX_COORDS_NUMBER = 100;
         Mesh mesh;
-        double[,] coordsList;
+        double[][] coordsList;
 
         protected virtual void Awake()
         {
@@ -49,13 +49,13 @@ namespace Mapbox.Unity.MeshGeneration.Factories
 
         void Query()
         {
-            var count = coordsList.Length / 2;
+            var count = coordsList.Length;
             var wp = new Vector2d[count];
 
             for (int i = 0; i < count; i++)
             {
-                wp[i].x = coordsList[i, 0];
-                wp[i].y = coordsList[i, 1];
+                wp[i].x = coordsList[i][0];
+                wp[i].y = coordsList[i][1];
             }
             // var mapMatchingResource = new MapMatchingResource();
             // mapMatchingResource.Steps = false;
@@ -165,23 +165,23 @@ namespace Mapbox.Unity.MeshGeneration.Factories
             _map.SetZoom(22f);
             _map.UpdateMap();
             coordsList = ExerciseService.GetRouteCoords();
-            int indexToCompare = 0, indexOffset = 1;
+            int indexToCompare = 0;
             List<int> indexes = new List<int>();
 
-            for (int i = 0; i < coordsList.Length / 3; i++)
+            for (int i = 0; i < coordsList.Length; i++)
             {
                 if (i == 0)
                     continue;
 
-                double nDistance = GetDistance(coordsList[i - 1, 0], coordsList[i, 0],
-                    coordsList[i - 1, 1], coordsList[i, 1],
-                    coordsList[i - 1, 2], coordsList[i, 2]);
+                double nDistance = GetDistance(coordsList[i - 1][0], coordsList[i][0],
+                    coordsList[i - 1][1], coordsList[i][1],
+                    coordsList[i - 1][2], coordsList[i][2]);
 
                 if (nDistance <= 30)
                 {
-                    double distance = GetDistance(coordsList[indexToCompare, 0], coordsList[i, 0],
-                    coordsList[indexToCompare, 1], coordsList[i, 1],
-                    coordsList[indexToCompare, 2], coordsList[i, 2]);
+                    double distance = GetDistance(coordsList[indexToCompare][0], coordsList[i][0],
+                    coordsList[indexToCompare][1], coordsList[i][1],
+                    coordsList[indexToCompare][2], coordsList[i][2]);
 
                     if (distance >= 10)
                     {
@@ -191,25 +191,14 @@ namespace Mapbox.Unity.MeshGeneration.Factories
                 }
             }
 
-            // if (indexes.Count > MAX_COORDS_NUMBER)
-            // {
-            //     indexOffset = (int)Math.Ceiling((double)indexes.Count / MAX_COORDS_NUMBER);
-            // }
+            double[][] newCoords = new double[indexes.Count][];
 
-            double[,] newCoords = new double[indexes.Count / indexOffset, 2];
-
-            for (int j = 0; j < indexes.Count / indexOffset; j++)
+            for (int j = 0; j < indexes.Count; j++)
             {
-                if (j == (indexes.Count / indexOffset) - 1)
-                {
-                    newCoords[j, 0] = coordsList[indexes[indexes.Count - 1], 0];
-                    newCoords[j, 1] = coordsList[indexes[indexes.Count - 1], 1];
-                }
-                else
-                {
-                    newCoords[j, 0] = coordsList[indexes[j * indexOffset], 0];
-                    newCoords[j, 1] = coordsList[indexes[j * indexOffset], 1];
-                }
+                newCoords[j] = new double[] {
+                    coordsList[indexes[j]][0],
+                    coordsList[indexes[j]][1]
+                };
             }
 
             coordsList = newCoords;
